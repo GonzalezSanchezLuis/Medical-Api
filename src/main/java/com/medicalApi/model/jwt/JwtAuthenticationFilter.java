@@ -1,6 +1,8 @@
 package com.medicalApi.model.jwt;
 
 import java.io.IOException;
+
+import com.medicalApi.service.BlacklistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     @Autowired
     private JwtUtils jwtUtil;
 
+    @Autowired
+    private BlacklistService blacklistService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestTokenHeader = request.getHeader("Authorization");
@@ -31,6 +36,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
+
+            if (blacklistService.isTokenBlacklisted(jwtToken)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
 
             try {
                 username = jwtUtil.extractUserEmail(jwtToken);

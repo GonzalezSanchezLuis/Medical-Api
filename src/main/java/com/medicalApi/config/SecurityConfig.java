@@ -46,7 +46,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/login").permitAll()
+                .requestMatchers("/api/v1/auth/login","/api/v1/user/register","/api/v1/doctor/register","/api/v1/auth/logout").permitAll()
                 .requestMatchers(
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
@@ -54,8 +54,6 @@ public class SecurityConfig {
                     "/swagger-ui.html",
                     "/webjars/**",
                     "/v2/api-docs/**").permitAll()
-                .requestMatchers("/api/v1/user/register").permitAll()
-                .requestMatchers("/api/v1/doctor/register").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated())
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
@@ -72,12 +70,20 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:8080"); // Cambia esto al origen donde se ejecuta Swagger UI
-        config.addAllowedMethod("*");
-        config.addAllowedHeader("*");
-        config.setAllowCredentials(true); // Permite enviar credenciales
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*"); // Permitir todas las solicitudes de todos los orígenes
+        config.addAllowedHeader("*"); // Permitir todos los encabezados HTTP
+        config.addAllowedMethod("*"); // Permitir todos los métodos HTTP
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.addAllowedOrigin("http://localhost:8080"); // Cambia esto al origen donde se ejecuta Swagger UI
+//        config.addAllowedMethod("*");
+//        config.addAllowedHeader("*");
+//        config.setAllowCredentials(true); // Permite enviar credenciales
+//        source.registerCorsConfiguration("/**", config);
+//        return new CorsFilter(source);
     }
 
 }

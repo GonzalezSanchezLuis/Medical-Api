@@ -2,6 +2,8 @@ package com.medicalApi.service.impl;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,16 +49,18 @@ public class DoctorImpl implements DoctorService{
     @Override
     public Doctor updateDoctor(Long id, Doctor doctor) {
         Doctor thereIsDoctor = doctorRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No hay un medico registrado con ese ID"));
-        
-            thereIsDoctor.setDoctorName(doctor.getDoctorName());
-            thereIsDoctor.setEmail(doctor.getEmail());
-            thereIsDoctor.setPassword(bCryptPasswordEncoder.encode(doctor.getPassword()));
-            thereIsDoctor.setSurnames(doctor.getSurnames());
-            thereIsDoctor.setSpecialty(doctor.getSpecialty());
-            thereIsDoctor.setSpecialty(doctor.getSpecialty());
-            thereIsDoctor.setAddressConsultingRoom(doctor.getAddressConsultingRoom());
-            thereIsDoctor.setPhoneConsultingRoom(doctor.getPhoneConsultingRoom());         
+
+        thereIsDoctor.setPassword(bCryptPasswordEncoder.encode(doctor.getPassword()));
+        BeanUtils.copyProperties(doctor,thereIsDoctor,"id");
+
             return doctorRepository.save(thereIsDoctor);
+//            thereIsDoctor.setDoctorName(doctor.getDoctorName());
+//            thereIsDoctor.setEmail(doctor.getEmail());
+//            thereIsDoctor.setSurnames(doctor.getSurnames());
+//            thereIsDoctor.setSpecialty(doctor.getSpecialty());
+//            thereIsDoctor.setSpecialty(doctor.getSpecialty());
+//            thereIsDoctor.setAddressConsultingRoom(doctor.getAddressConsultingRoom());
+//            thereIsDoctor.setPhoneConsultingRoom(doctor.getPhoneConsultingRoom());
     }
 
     public void deleteDoctor(Long id){

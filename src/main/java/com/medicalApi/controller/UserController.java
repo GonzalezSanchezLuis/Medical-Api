@@ -2,6 +2,8 @@ package com.medicalApi.controller;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import com.medicalApi.controlExceptions.EmailAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,41 +35,36 @@ public class UserController {
     private UserService userService;
  
 
-    @PostMapping("register")
-    @Operation(
-        summary = "Register a New User",
-        description = "Registra un nuevo usuario",
-        tags = {"User"})
+    @Operation(summary = "Register a New User",description = "Registra un nuevo usuario",tags = {"User"})
     @ApiDocumentation.UserApiResponses
-    public ResponseEntity<?> registerUser(@RequestBody User user) throws Exception{
-       
+    @PostMapping("register")
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
             user.setPerfil("default.png");
-            Set<UserModerator> moderators = new HashSet<>();
+            user.setRole("ROLE_USER");
 
-            
+            Set<UserModerator> moderators = new HashSet<>();
             Moderator moderator = new Moderator();
-            moderator.setModeratorId(2L); // ID del moderador existente
+            moderator.setModeratorId(2L);
             moderator.setModeratorName("NORMAL");
-    
             UserModerator userModerator = new UserModerator();
             userModerator.setUser(user);
             userModerator.setModerator(moderator);
             moderators.add(userModerator);
-    
-            User register = userService.register(user, moderators);
-            return ResponseEntity.status(HttpStatus.CREATED).body(register);
+
+            User registeredUser = userService.register(user, moderators);
+            return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+        } catch (EmailAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    @GetMapping("user/{id}")
-    @Operation(
-        summary = "Get User by ID",
-        description = "Obtiene la información de un usuario por su ID",
-        tags = {"User"})
+
+    @Operation( summary = "Get User by ID",description = "Obtiene la información de un usuario por su ID",tags = {"User"})
     @ApiDocumentation.UserApiResponses
+    @GetMapping("user/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) throws Exception{
        try {
          User user = userService.getUserById(id);
@@ -77,12 +74,9 @@ public class UserController {
        }
     }
 
-    @PutMapping("update/{id}")
-    @Operation(
-        summary = "Update User",
-        description = "Actualiza la información de un usuario por su ID",
-        tags = {"User"})
+    @Operation(summary = "Update User",description = "Actualiza la información de un usuario por su ID",tags = {"User"})
     @ApiDocumentation.UserApiResponses
+    @PutMapping("update/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) throws Exception {
         try {
             User updateUser = userService.updateUser(id, user);
@@ -92,12 +86,9 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("delete/{id}")
-    @Operation(
-        summary = "Delete User",
-        description = "Elimina un usuario por su ID",
-        tags = {"User"})
+    @Operation( summary = "Delete User",description = "Elimina un usuario por su ID",tags = {"User"})
     @ApiDocumentation.UserApiResponses
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) throws Exception{
         try {
             userService.deleteUser(id);

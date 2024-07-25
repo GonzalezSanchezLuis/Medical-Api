@@ -28,24 +28,22 @@ public class DoctorController {
     @Autowired
     private DoctorService doctorService;
 
+     @Operation(summary = "Register a New Doctor", description = "Registro de un nuevo medico", tags = {"Doctor"})
+    @ApiDocumentation.DoctorApiResponses
     @PostMapping("register")
-     @Operation(
-        summary = "Register a New Doctor",
-        description = "Registro de un nuevo medico",
-        tags = {"Doctor"})
-        @ApiDocumentation.DoctorApiResponses
-
-    public Doctor register(@RequestBody Doctor doctor) throws Exception {
-        return doctorService.register(doctor);
+    public ResponseEntity register(@RequestBody Doctor doctor) throws Exception {
+         try {
+             doctor.setRole("ROLE_DOCTOR"); // Asigna el rol aquí
+             Doctor registeredDoctor = doctorService.register(doctor);
+             return ResponseEntity.status(HttpStatus.CREATED).body(registeredDoctor);
+         } catch (Exception e) {
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+         }
     }
 
+    @Operation(summary = "Get Doctor by ID", description = "Obtiene la información de un doctor por su ID", tags = {"Doctor"})
+    @ApiDocumentation.DoctorApiResponses
     @GetMapping("doctor/{id}")
-    @Operation(
-        summary = "Get Doctor by ID",
-        description = "Obtiene la información de un doctor por su ID",
-        tags = {"Doctor"})
-        @ApiDocumentation.DoctorApiResponses
-
     public ResponseEntity<?> getDoctorById(@PathVariable Long id) throws Exception {
         try {
             if(id == null){
@@ -59,13 +57,9 @@ public class DoctorController {
         
     }
 
+    @Operation(summary = "Get  All Doctors", description = "Obtiene la información de todos los medicos registrados", tags = {"Doctor"})
+    @ApiDocumentation.DoctorApiResponses
     @GetMapping("doctors")
-    @Operation(
-        summary = "Get  All Doctors",
-        description = "Obtiene la información de todos los medicos registrados",
-        tags = {"Doctor"})
-        @ApiDocumentation.DoctorApiResponses
-
     public ResponseEntity<?> getDoctors() throws Exception {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(doctorService.getAllDoctors());
@@ -75,13 +69,9 @@ public class DoctorController {
 
     }
 
+    @Operation(summary = "Update Doctor", description = "Actualiza la información de un medico por su ID", tags = {"Doctor"})
+    @ApiDocumentation.DoctorApiResponses
     @PutMapping("update/{id}")
-    @Operation(
-        summary = "Update Doctor",
-        description = "Actualiza la información de un medico por su ID",
-        tags = {"Doctor"})
-        @ApiDocumentation.DoctorApiResponses
-
     public ResponseEntity<?> updateDoctor(@PathVariable Long id, @RequestBody Doctor doctor) throws Exception {
         try {
             Doctor updateDoctor = doctorService.updateDoctor(id, doctor);
@@ -92,13 +82,9 @@ public class DoctorController {
 
     }
 
+    @Operation(summary = "Delete Doctor", description = "elimina  la información de un medico por su ID", tags = {"Doctor"})
+    @ApiDocumentation.DoctorApiResponses
     @DeleteMapping("delete/{id}")
-    @Operation(
-        summary = "Delete Doctor",
-        description = "elimina  la información de un medico por su ID",
-        tags = {"Doctor"})
-        @ApiDocumentation.DoctorApiResponses
-        
     public ResponseEntity<?> deleteDoctor(@PathVariable Long id) throws Exception {
         try {
             doctorService.deleteDoctor(id);

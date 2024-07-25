@@ -2,6 +2,9 @@ package com.medicalApi.service.impl;
 
 import java.util.Optional;
 import java.util.Set;
+
+import com.medicalApi.controlExceptions.EmailAlreadyExistsException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,21 +36,13 @@ public class UserImpl implements UserService{
     public User register(User user, Set<UserModerator> userModerators) throws Exception {
     User localUser = userRepository.findUserByEmail(user.getEmail());
     if (localUser != null) {
-        throw new Exception("Ya existe un usuario registrado con ese email.");
+        throw new EmailAlreadyExistsException("Ya existe un usuario registrado con ese email.");
     }
-
-    // Encriptar la contraseña del usuario
     user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-
-    // Guardar el usuario primero
     localUser = userRepository.save(user);
-
-    // Configurar y guardar los UserModerators
     for (UserModerator userModerator : userModerators) {
-        // Verificar si el moderador ya existe en la base de datos
         Moderator existingModerator = moderatorRepository.findById(userModerator.getModerator().getModeratorId()).orElse(null);
         if (existingModerator == null) {
-            // Guardar el moderador si no existe
             existingModerator = moderatorRepository.save(userModerator.getModerator());
         }
         userModerator.setModerator(existingModerator);
@@ -71,15 +66,17 @@ public class UserImpl implements UserService{
     @Override
     public User updateUser(Long id, User user) {
         User userUpdate = userRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("No hay un usuario con este ID"));
-    
-        userUpdate.setName(user.getName());
-        userUpdate.setSurnames(user.getSurnames());   
-        userUpdate.setEmail(user.getEmail());
+
         userUpdate.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userUpdate.setAddress(user.getAddress());
-        userUpdate.setPhone(user.getPhone());
-        userUpdate.setPerfil(user.getPerfil());
-    return userRepository.save(userUpdate);
+        BeanUtils.copyProperties(user,userUpdate,"id");
+        return userRepository.save(userUpdate);
+
+//        userUpdate.setName(user.getName());
+//        userUpdate.setSurnames(user.getSurnames());
+//        userUpdate.setEmail(user.getEmail());
+//        userUpdate.setAddress(user.getAddress());
+//        userUpdate.setPhone(user.getPhone());
+//        userUpdate.setPerfil(user.getPerfil());
     }
 
     @Override

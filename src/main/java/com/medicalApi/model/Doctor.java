@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +18,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Doctor")
+@Table(name = "doctor")
 public class Doctor implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +33,16 @@ public class Doctor implements UserDetails{
     private String profesionalCard;
     private String addressConsultingRoom;
     private String phoneConsultingRoom;
+    private boolean enabled = true;
+    private String role;
 
     @OneToMany(mappedBy = "doctor")
     @JsonIgnore
     private List<MedicalAppointment> appointments;
+
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkSchedule> workSchedules;
 
     @Override
     @Schema(hidden = true)

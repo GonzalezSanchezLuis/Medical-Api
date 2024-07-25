@@ -5,9 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import lombok.Data;
 
-@Data
 public class ApiDocumentation {
 
     // Define schemas reutilizables para las respuestas y solicitudes de JWT
@@ -33,9 +31,12 @@ public class ApiDocumentation {
         @Schema(name = "Medical Appointment")
         class MedicalAppointmentSchema extends com.medicalApi.model.MedicalAppointment {
         }
+
+        @Schema(name = "Work Schedule")
+        class WorkScheduleSchema extends com.medicalApi.model.WorkSchedule {
+        }
     }
 
-    // Define una anotación para la respuesta de autenticación
     @ApiResponses({
         @ApiResponse(
             responseCode = "200",
@@ -46,9 +47,8 @@ public class ApiDocumentation {
             )
         )
     })
-    public @interface AuthApiResponse {}
 
-    // Define una anotación para el cuerpo de la solicitud de autenticación
+    public @interface AuthApiResponse {}
     @RequestBody(
         description = "Autenticación con email de usuario y contraseña",
         required = true,
@@ -58,8 +58,6 @@ public class ApiDocumentation {
         )
     )
     public @interface AuthRequestBody {}
-
-    // Define una anotación para el cuerpo de la solicitud de registro de usuario
     @RequestBody(
         description = "Registro de usuario",
         required = true,
@@ -69,8 +67,6 @@ public class ApiDocumentation {
         )
     )
     public @interface RegisterRequestBody {}
-
-    // Define una anotación para las respuestas de usuario
     @ApiResponses({
         @ApiResponse(
             responseCode = "200",
@@ -130,6 +126,27 @@ public class ApiDocumentation {
             )
         )
     })
+
+    public @interface ScheduleApiResponses{}
+    
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Operación exitosa",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = Schemas.WorkScheduleSchema.class)
+                )
+                ),
+                @ApiResponse(
+                    responseCode = "500",
+                    description = "Error del servidor",
+                    content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = String.class)
+            )
+         )
+        })
 
     public @interface MedicalAppointmentApiResponses {}
 

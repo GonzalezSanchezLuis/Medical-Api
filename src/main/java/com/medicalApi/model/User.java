@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.medicalApi.model.jwt.Authority;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -28,6 +27,7 @@ import lombok.Data;
 public class User implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(hidden = true)
     private Long userId;
 
     private String name;
@@ -39,6 +39,8 @@ public class User implements UserDetails{
     private String phone;
     private boolean enabled = true;
     private String perfil;
+    @Schema(hidden = true)
+    private String role;
  
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonIgnore

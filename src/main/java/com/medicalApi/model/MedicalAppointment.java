@@ -1,7 +1,12 @@
 package com.medicalApi.model;
 
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,21 +22,27 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table
+@Table(name = "medical_appointment")
 public class MedicalAppointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    private Long id; 
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime dateTime;
+    private Long id;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    private LocalTime appointmentTime;
+
+    private String dateOfAppointment;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate date;
+
+    @Schema(hidden = true)
     @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "doctorId")
     private Doctor doctor;
 
     @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "patient_id")
-    @JsonIgnore
+    @Schema(hidden = true)
     private User patient;
 }
