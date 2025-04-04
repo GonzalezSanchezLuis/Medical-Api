@@ -22,7 +22,7 @@ import com.medicalApi.config.Documentation.ApiDocumentation;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/v1/doctor/")
+@RequestMapping("/api/v1/doctors/")
 @Tag(name = "Doctor", description = "Controlador doctor")
 public class DoctorController {
     @Autowired

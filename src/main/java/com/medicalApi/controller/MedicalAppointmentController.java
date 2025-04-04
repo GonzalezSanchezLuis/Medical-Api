@@ -16,7 +16,7 @@ import java.security.Principal;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/v1/appointment/")
+@RequestMapping("/api/v1/appointments/")
 @Tag(name = "Medical Appointment", description = "Controlador de manejo de  citas medicas")
 public class MedicalAppointmentController {
     @Autowired
@@ -31,7 +31,7 @@ public class MedicalAppointmentController {
 
     @Operation(summary = "Get all  Medicals Appointments", description = "Obtener todas las citas medicas", tags = {"Medical Appointment"})
     @ApiDocumentation.MedicalAppointmentApiResponses
-    @GetMapping("appointments")
+    @GetMapping("all")
     public ResponseEntity<?> getAllAppointments() throws Exception{
         try {
             return ResponseEntity.status(HttpStatus.OK).body(medicalAppointmentService.getAllAppointments());
