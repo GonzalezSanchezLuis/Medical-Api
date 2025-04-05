@@ -2,6 +2,20 @@
 <hr>
 <p>This API connects users with doctors, facilitating efficient appointment management. Developed with Java and Spring Boot, it implements JWT authentication and role-based access control, following the MVC pattern.</p>
 
+
+## 📺 Demo
+
+Check out a live demo of the API in action on YouTube:
+
+[![Watch the demo on YouTube](https://img.youtube.com/vi/tu-enlace-aqui/hqdefault.jpg)](https://www.youtube.com/watch?v=tu-enlace-aqui)
+
+
+> The video walks through user registration, authentication, booking appointments, and navigating the Swagger UI.
+
+
+
+
+
 <h2> 🚀 Technologies used</h2>
 
 - Java 8
